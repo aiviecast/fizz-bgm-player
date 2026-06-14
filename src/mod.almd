@@ -1,0 +1,44 @@
+// fizz_bgm_player — 複数曲 BGM のプレイリスト・ナビゲーション(§8 Overlay)。
+//
+// 責務 (一行): 現在の曲 index と曲数から、次/前/シャッフルの曲 index を決める。
+//
+// openaituber は現状 1 曲を選んで loop だけだが、複数曲管理(次へ/前へ/シャッフル/
+// ラップ)を index ベースで実装したのがこの部品。実際の Audio 再生やトラック名⇔file の
+// 対応はブラウザ側、ナビのポリシーは純粋なので Almide に集約。曲リストは呼び出し側が
+// 持ち、ここは index だけ扱う(文字列を跨がない = wasm でも安全)。
+
+import int
+import float
+
+// index を [0, count) にクランプ。count<=0 は -1 (曲無し)。
+fn clamp(idx: Int, count: Int) -> Int =
+  if count <= 0 then 0 - 1
+  else if idx < 0 then 0
+  else if idx >= count then count - 1
+  else idx
+
+// 次の曲。末尾なら loop=true で先頭へ、false で末尾維持。
+fn next(cur: Int, count: Int, wrap: Bool) -> Int =
+  if count <= 0 then 0 - 1
+  else if cur + 1 >= count then (if wrap then 0 else count - 1)
+  else cur + 1
+
+// 前の曲。先頭なら loop=true で末尾へ、false で先頭維持。
+fn prev(cur: Int, count: Int, wrap: Bool) -> Int =
+  if count <= 0 then 0 - 1
+  else if cur - 1 < 0 then (if wrap then count - 1 else 0)
+  else cur - 1
+
+// シャッフル次曲: cur 以外からランダムに 1 つ。rand01 は呼び出し側が渡す [0,1)。
+// [0, count-1) の乱数を cur をスキップする形で [0,count)\{cur} に写す。
+fn shuffle_next(cur: Int, count: Int, rand01: Float) -> Int = {
+  if count <= 1 then (if count == 1 then 0 else 0 - 1)
+  else {
+    let r = float_floor_to_int(rand01 * int_to_float(count - 1))
+    let rr = if r < 0 then 0 else if r > count - 2 then count - 2 else r
+    if rr >= clamp(cur, count) then rr + 1 else rr
+  }
+}
+
+local fn int_to_float(n: Int) -> Float = int.to_float(n)
+local fn float_floor_to_int(x: Float) -> Int = float.to_int(float.floor(x))

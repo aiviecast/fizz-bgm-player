@@ -1,0 +1,4 @@
+build/
+*.wasm
+fizz-bgm-player
+.almide/

@@ -1,0 +1,4 @@
+[package]
+name = "fizz_bgm_player"
+version = "0.1.0"
+description = "Fizz BGM player — playlist navigation (next/prev/wrap/shuffle) by track index. One Almide core, native + wasm."
