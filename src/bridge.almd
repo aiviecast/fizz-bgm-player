@@ -4,16 +4,16 @@ import float
 import int
 @export(wasm, "next")
 fn bgm_next(cur: Float, count: Float, wrap: Float) -> Float =
-  int.to_float(bgm.next(float.to_int(cur), float.to_int(count), wrap > 0.5))
+  float.from(bgm.next(int.from_saturating(cur), int.from_saturating(count), wrap > 0.5))
 @export(wasm, "prev")
 fn bgm_prev(cur: Float, count: Float, wrap: Float) -> Float =
-  int.to_float(bgm.prev(float.to_int(cur), float.to_int(count), wrap > 0.5))
+  float.from(bgm.prev(int.from_saturating(cur), int.from_saturating(count), wrap > 0.5))
 @export(wasm, "shuffle_next")
 fn bgm_shuffle(cur: Float, count: Float, rand01: Float) -> Float =
-  int.to_float(bgm.shuffle_next(float.to_int(cur), float.to_int(count), rand01))
+  float.from(bgm.shuffle_next(int.from_saturating(cur), int.from_saturating(count), rand01))
 @export(wasm, "clamp")
 fn bgm_clamp(idx: Float, count: Float) -> Float =
-  int.to_float(bgm.clamp(float.to_int(idx), float.to_int(count)))
+  float.from(bgm.clamp(int.from_saturating(idx), int.from_saturating(count)))
 effect fn main() -> Unit = {
   let _a = bgm_next(0.0, 3.0, 1.0)
   let _b = bgm_prev(0.0, 3.0, 1.0)
