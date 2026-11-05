@@ -40,5 +40,5 @@ fn shuffle_next(cur: Int, count: Int, rand01: Float) -> Int = {
   }
 }
 
-local fn int_to_float(n: Int) -> Float = int.to_float(n)
-local fn float_floor_to_int(x: Float) -> Int = float.to_int(float.floor(x))
+local fn int_to_float(n: Int) -> Float = float.from(n)
+local fn float_floor_to_int(x: Float) -> Int = int.from_saturating(float.floor(x))
